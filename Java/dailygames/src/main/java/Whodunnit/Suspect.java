@@ -6,7 +6,11 @@ import Utility.Color;
 public class Suspect {
 
     // hair, eye, skin
-    String name = "Template Name";
+    String[] prefix = { "Mr.", "Dr.", "Ms.", "Mrs.", "Sir.", "Lord", "King" };
+    String[] lastname = { "Red", "Orange", "Yellow", "Green", "Lime", "Cyan", "B. Blue", "Blue", "Violet", "Purple",
+            "Indigo", "Grey", "Black", "White", "Maroon", "Crimson", "Merengue" };
+    String name;
+
     Color hair;
     Color eyes;
     Color skin;
@@ -17,16 +21,19 @@ public class Suspect {
             { Color.BROWN, Color.BLACK, Color.GREEN, Color.LIGHT_GREEN, Color.BLUE, Color.LIGHT_BLUE },
             { Color.BLACK, Color.BROWN, Color.LIGHT_WHITE } };
 
-    Suspect(String name) {
-        this.name = name;
-        hair = COLORS[1][rand.nextInt(4)];
-        eyes = COLORS[2][rand.nextInt(7)];
-        skin = COLORS[3][rand.nextInt(4)];
+    Suspect() {
+        this.name = prefix[rand.nextInt(prefix.length)] + " " + lastname[rand.nextInt(lastname.length)];
+        hair = COLORS[0][rand.nextInt(3)];
+        eyes = COLORS[1][rand.nextInt(6)];
+        skin = COLORS[2][rand.nextInt(3)];
     }
 
     @Override
     public String toString() {
-        return name + ": " + hair + "H" + END + eyes + "E" + END + skin + "S" + END;
+        return name + ": "
+                + hair + "H" + END
+                + eyes + "E" + END
+                + skin + "S" + END;
     }
 
 }

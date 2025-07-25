@@ -32,4 +32,9 @@ public enum Color {
         ANSIVal = val;
     }
 
+    @Override
+    public String toString() {
+        return ANSIVal;
+    }
+
 }
