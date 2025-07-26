@@ -17,9 +17,9 @@ public class Suspect {
     Random rand = new Random();
     static final Color END = Color.END;
     static final Color[][] COLORS = new Color[][] {
-            { Color.BROWN, Color.BLACK, Color.YELLOW },
+            { Color.BLACK, Color.YELLOW, Color.WHITE, Color.RED },
             { Color.BROWN, Color.BLACK, Color.GREEN, Color.LIGHT_GREEN, Color.BLUE, Color.LIGHT_BLUE },
-            { Color.BLACK, Color.BROWN, Color.LIGHT_WHITE } };
+            { Color.BLACK, Color.BROWN, Color.WHITE } };
 
     Suspect() {
         this.name = prefix[rand.nextInt(prefix.length)] + " " + lastname[rand.nextInt(lastname.length)];

@@ -16,7 +16,7 @@ public enum Color {
     LIGHT_BLUE("\033[1;34m"),
     LIGHT_PURPLE("\033[1;35m"),
     LIGHT_CYAN("\033[1;36m"),
-    LIGHT_WHITE("\033[1;37m"),
+    WHITE("\033[1;37m"),
     BOLD("\033[1m"),
     FAINT("\033[2m"),
     ITALIC("\033[3m"),
@@ -36,5 +36,4 @@ public enum Color {
     public String toString() {
         return ANSIVal;
     }
-
 }
