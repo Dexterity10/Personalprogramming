@@ -13,7 +13,7 @@ public class Main {
 
     List<Suspect> susList = new ArrayList<>();
     HashMap<String, Color> clues = new HashMap<>();
-    int diff = 5;
+    int diff = 6;
     Suspect culprit;
     Random rand = new Random();
 
@@ -22,6 +22,13 @@ public class Main {
             Suspect person = new Suspect();
             susList.add(person);
         }
+    }
+
+    private void setDifficulty(Scanner scan) {
+        System.out.println("Set Difficulty: [1] Easy | [2] Medium | [3] Hard");
+        int answer = scan.nextInt();
+        diff = answer * 3;
+
     }
 
     private void pickCulprit() {
@@ -38,16 +45,15 @@ public class Main {
         return culprit == susList.get(index - 1);
     }
 
-    private void startGame() {
-        // TODO: add difficulty options. 3,6,9 suspects
-
+    private void startGame(Scanner scan) {
+        setDifficulty(scan);
         getList();
-        pickCulprit();
-        System.out.println(culprit);
+        // System.out.println(culprit);
         System.out.println(
                 Color.BOLD + susList.remove(0).name
                         + " has died." + Color.END
                         + " You are the detective on the case. Find the murderer before it's too late!");
+        pickCulprit();
         printList();
     }
 
@@ -90,50 +96,48 @@ public class Main {
         return true;
     }
 
-    private void loop() {
-        try (Scanner scan = new Scanner(System.in)) {
-            boolean running = true;
-            int days = 0;
-            while (running) {
-                days++;
-                System.out.println("\nDay " + days + ": ");
-                switch (rand.nextInt(3)) {
-                    case 0 -> {
-                        clues.put("Hair", culprit.hair);
-                    }
-                    case 1 -> {
-                        clues.put("Eyes", culprit.eyes);
-                    }
-                    case 2 -> {
-                        clues.put("Skin", culprit.skin);
-                    }
-                    default -> {
-                        System.out.println("error! Got a case outside 0,2");
-                    }
+    private void loop(Scanner scan) {
+        boolean running = true;
+        int days = 0;
+        while (running) {
+            days++;
+            System.out.println("\nDay " + days + ": ");
+            switch (days) {
+                case 1 -> {
+                    clues.put("Hair", culprit.hair);
                 }
-
-                System.out.print("The culprit has ");
-                String toPrint = clues.entrySet().stream()
-                        .map(entry -> entry.getValue() + entry.getValue().name().substring(0, 1)
-                                + entry.getValue().name().substring(1).toLowerCase() + " " + entry.getKey() + Color.END)
-                        .collect(Collectors.joining(", "));
-                System.out.println(toPrint);
-                String line = scan.nextLine();
-                String[] parts = line.trim().split("\\s+");
-                if (parts.length == 0)
-                    continue;
-                running = commandMan(parts);
-
+                case 2 -> {
+                    clues.put("Eyes", culprit.eyes);
+                }
+                case 3 -> {
+                    clues.put("Skin", culprit.skin);
+                }
+                default -> {
+                    System.out.println("No new clues...");
+                }
             }
+            System.out.print("The culprit has ");
+            String toPrint = clues.entrySet().stream()
+                    .map(entry -> entry.getValue() + entry.getValue().name().substring(0, 1)
+                            + entry.getValue().name().substring(1).toLowerCase() + " " + entry.getKey() + Color.END)
+                    .collect(Collectors.joining(", "));
+            System.out.println(toPrint);
+            
+            String line = scan.nextLine();
+            String[] parts = line.trim().split("\\s+");
+            if (parts.length == 0)
+                continue;
+            running = commandMan(parts);
         }
-
     }
 
     public static void main(String[] args) {
-        Main game = new Main();
-        game.startGame();
+        try (Scanner scan = new Scanner(System.in)) {
+            Main game = new Main();
+            game.startGame(scan);
 
-        // game loop
-        game.loop();
+            // game loop
+            game.loop(scan);
+        }
     }
 }
