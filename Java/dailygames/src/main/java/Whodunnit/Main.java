@@ -98,11 +98,13 @@ public class Main {
 
     private void loop(Scanner scan) {
         boolean running = true;
-        int days = 0;
+        int days = -1;
         while (running) {
             days++;
-            System.out.println("\nDay " + days + ": ");
             switch (days) {
+                case 0 -> {
+
+                }
                 case 1 -> {
                     clues.put("Hair", culprit.hair);
                 }
@@ -116,13 +118,16 @@ public class Main {
                     System.out.println("No new clues...");
                 }
             }
-            System.out.print("The culprit has ");
-            String toPrint = clues.entrySet().stream()
-                    .map(entry -> entry.getValue() + entry.getValue().name().substring(0, 1)
-                            + entry.getValue().name().substring(1).toLowerCase() + " " + entry.getKey() + Color.END)
-                    .collect(Collectors.joining(", "));
-            System.out.println(toPrint);
-            
+            if (days > 0) {
+                System.out.println("\nDay " + days + ": ");
+                System.out.print("The culprit has ");
+                String toPrint = clues.entrySet().stream()
+                        .map(entry -> entry.getValue() + entry.getValue().name().substring(0, 1)
+                                + entry.getValue().name().substring(1).toLowerCase() + " " + entry.getKey() + Color.END)
+                        .collect(Collectors.joining(", "));
+                System.out.println(toPrint);
+            }
+
             String line = scan.nextLine();
             String[] parts = line.trim().split("\\s+");
             if (parts.length == 0)
