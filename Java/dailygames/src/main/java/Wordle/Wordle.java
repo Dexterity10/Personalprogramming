@@ -1,14 +1,24 @@
 package Wordle;
 
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
-import java.nio.file.*;
-import java.time.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Wordle {
     private static final String WORDLE_FILE = "Data/wordles.txt";
@@ -17,9 +27,10 @@ public class Wordle {
     private static final Scanner SCANNER = new Scanner(System.in);
 
     private enum Color {
-        BLACK("\033[0;30m"), YELLOW("\033[1;33m"), GREEN("\033[0;32m"), BOLD("\033[1m"), END("\033[0;0;0m");
+        BLACK("\033[0;30m"), YELLOW("\033[1;33m"), GREEN("\033[0;32m"), BOLD("\033[1m"), END("\033[0;0;0m"),
+        LINEUP("\033[1A"), LINECLEAR("\033[2K");
 
-        private String ANSI;
+        private final String ANSI;
 
         Color(String ANSI) {
             this.ANSI = ANSI;
@@ -42,10 +53,10 @@ public class Wordle {
 
     private int gameType; // 0=daily, 1=random, -1=debug
     private String currentWord;
-    private Map<Character, Color> letters;
-    private List<List<Tile>> board = new ArrayList<>();
+    private final Map<Character, Color> letters;
+    private final List<List<Tile>> board = new ArrayList<>();
     private boolean endGame = false;
-    private Random random;
+    private final Random random;
 
     public Wordle(boolean isRandom) {
         this.gameType = isRandom ? 1 : 0;
@@ -97,9 +108,11 @@ public class Wordle {
     }
 
     private void wordleCLI() {
+        String message = "";
         while (!endGame) {
             printBoard();
-            System.out.print(": ");
+            System.out.print(message + "\n: ");
+            message = "";
             String userInput = SCANNER.nextLine().trim().toLowerCase();
 
             if (userInput.startsWith("/")) {
@@ -108,9 +121,9 @@ public class Wordle {
             }
 
             if (userInput.length() != 5) {
-                System.out.println("incorrect word length");
+                message = "incorrect word length";
             } else if (!ALLOWED_GUESSES.contains(userInput)) {
-                System.out.println("word not on list\n\n");
+                message = "word not on list";
             } else {
                 addGuess(userInput);
                 endGame = checkEndGame();
@@ -203,17 +216,25 @@ public class Wordle {
     }
 
     private void printBoard() {
+        int totalLines = 12;
+
+        if (!board.isEmpty()) {
+            for (int i = 0; i < totalLines; i++) {
+                System.out.print(Color.LINEUP);
+                System.out.print(Color.LINECLEAR);
+            }
+        }
         for (List<Tile> row : board) {
             setRowColor(row);
             for (Tile t : row) {
                 System.out.printf("[%s%c%s]", t.color, Character.toUpperCase(t.letter), Color.END);
             }
-
             System.out.println();
         }
         for (int i = board.size(); i < 6; i++) {
             System.out.println("[ ][ ][ ][ ][ ]");
         }
+
         printKeyboard();
     }
 
@@ -253,7 +274,7 @@ public class Wordle {
         StringBuilder row = new StringBuilder();
         List<Character> kbd = "qwertyuiopadsfghkjlzxcvbnm".chars().mapToObj(c -> (char) c).toList();
         for (Character c : kbd) {
-            row.append(letters.get(c).toString() + c + ' ' + Color.END);
+            row.append(letters.get(c).toString()).append(c).append(' ').append(Color.END);
             if ("plm".indexOf(c) >= 0)
                 row.append("\n ");
             if ("z".indexOf(c) >= 0)
@@ -270,9 +291,9 @@ public class Wordle {
                 .map(t -> t.letter).map(String::valueOf)
                 .collect(Collectors.joining())
                 .equals(currentWord) ? board.size() : 0;
-        out.append(type + " Javadle ");
+        out.append(type).append(" Javadle ");
         if (gameType == 0)
-            out.append(dayNum + " ");
+            out.append(dayNum).append(" ");
         out.append(outOf).append("/6\n");
         for (List<Tile> row : board) {
             String color;
@@ -292,10 +313,10 @@ public class Wordle {
                         color = Color.BLACK.toString();
                     }
                 }
-                ;
-                out.append(color + "[" + symbol + "]");
+
+                out.append(color).append("[").append(symbol).append("]");
             }
-            out.append("\n" + Color.END);
+            out.append("\n").append(Color.END);
         }
         return out.toString();
     }
@@ -306,7 +327,7 @@ public class Wordle {
         try {
             StringSelection sel = new StringSelection(text);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
-        } catch (Exception e) {
+        } catch (HeadlessException e) {
             System.err.println("Clipboard copy failed: " + e.getMessage());
         }
     }
