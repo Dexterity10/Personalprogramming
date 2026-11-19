@@ -3,10 +3,15 @@ from datetime import datetime
 
 types = ["arithmetic", "geometric"]
 
+debug = False
+
 
 def setup():
-    seed = "debug"  # datetime.now().strftime("%Y%m%d")
-    # random.seed(seed)
+    if debug:
+        seed = "debug"
+    else:
+        seed = datetime.now().strftime("%Y%m%d")
+    random.seed(seed)
 
 
 def startgame():
@@ -18,7 +23,8 @@ def startgame():
     match type:
         case 0:
             # arithmetic
-            print("arith")
+            if debug:
+                print("arithmetic")
             step = random.randint(-99, 100)
             for i in range(0, 3):
                 print(arithmetic(start, i, step), end=", ")
@@ -26,7 +32,8 @@ def startgame():
 
         case 1:
             # geometric
-            print("geom")
+            if debug:
+                print("geometric")
             step = random.randint(-9, 10)
             for i in range(0, 3):
                 print(geometric(start, i, step), end=", ")
@@ -40,7 +47,8 @@ def startgame():
     toShare = ""
     while guess != answer:
         guess = int(input(""))
-        print(answer)
+        if debug:
+            print(answer)
 
         if guess != answer:
             if answer > guess:

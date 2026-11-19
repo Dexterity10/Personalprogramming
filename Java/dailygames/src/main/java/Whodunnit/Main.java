@@ -26,9 +26,15 @@ public class Main {
 
     private void setDifficulty(Scanner scan) {
         System.out.println("Set Difficulty: [1] Easy | [2] Medium | [3] Hard");
-        int answer = scan.nextInt();
-        diff = answer * 3;
-
+        String out = scan.next();
+        try {
+            int answer = Integer.parseInt(out);
+            System.out.println(answer);
+            diff = answer * 3;
+            System.out.println("integer!");
+        } catch (NumberFormatException e) {
+            System.out.println("Not an integer!");
+        }
     }
 
     private void pickCulprit() {
@@ -89,7 +95,6 @@ public class Main {
                                 Commands:
                                     Quit | Exits the program
                                     Guess | Make an accusation. If you are wrong, someone dies and you gain a new clue. If you are right, you win.
-
                                 """);
             }
         }
@@ -100,10 +105,8 @@ public class Main {
         boolean running = true;
         int days = -1;
         while (running) {
-            days++;
             switch (days) {
                 case 0 -> {
-
                 }
                 case 1 -> {
                     clues.put("Hair", culprit.hair);
@@ -127,20 +130,19 @@ public class Main {
                         .collect(Collectors.joining(", "));
                 System.out.println(toPrint);
             }
-
             String line = scan.nextLine();
             String[] parts = line.trim().split("\\s+");
             if (parts.length == 0)
                 continue;
             running = commandMan(parts);
+            days++;
         }
     }
 
     public static void main(String[] args) {
-        try (Scanner scan = new Scanner(System.in)) {
+        try (Scanner scan = new Scanner(System.in).useDelimiter("\n")) {
             Main game = new Main();
             game.startGame(scan);
-
             // game loop
             game.loop(scan);
         }
